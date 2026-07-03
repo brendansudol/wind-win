@@ -50,7 +50,6 @@
   },
   "jest": {
     "preset": "jest-expo",
-    "watchman": false,
     "testMatch": [
       "**/__tests__/**/*.test.ts"
     ]
