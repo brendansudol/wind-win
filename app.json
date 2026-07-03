@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "wind-win",
+    "name": "Wind Win",
     "slug": "wind-win",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -8,9 +8,14 @@
     "scheme": "windwin",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/expo.icon",
+      "bundleIdentifier": "com.brendansudol.windwin",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Wind Win uses your location to look up local wind conditions and find Strava segments near you."
+      }
     },
     "android": {
+      "package": "com.brendansudol.windwin",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -26,13 +31,21 @@
     "plugins": [
       "expo-router",
       [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Wind Win uses your location to look up local wind conditions and find Strava segments near you."
+        }
+      ],
+      [
         "expo-splash-screen",
         {
           "backgroundColor": "#208AEF",
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
         }
-      ]
+      ],
+      "expo-web-browser",
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true,

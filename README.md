@@ -1,56 +1,62 @@
-# Welcome to your Expo app 👋
+# Wind Win 🌬️🚴
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A cycling companion app (a play on "win-win"): point your phone to see live wind on a
+device-oriented compass, and rank your Strava segments by how much today's wind will help
+you set a PR. Built with Expo (React Native) + TypeScript per [spec.md](spec.md).
 
-## Get started
+## Tabs
 
-1. Install dependencies
+- **Compass** — a rose that counter-rotates with the device so north stays true, a wind
+  arrow anchored to the real-world direction the wind blows *toward*, and a live
+  "Tailwind / Headwind / Crosswind" chip with the effective head/tail component.
+- **Segments** — after connecting Strava, your starred segments plus nearby discoveries,
+  ranked by grade-damped effective tailwind, with per-leg tail/cross/head map coloring in
+  the detail sheet and an "Open in Strava" deep link.
 
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Getting started
 
 ```bash
-npm run reset-project
+npm install
+npx expo start        # compass tab works in Expo Go
+npm run ios           # dev build — required for the Strava OAuth flow
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+The compass needs a physical device (simulators have no magnetometer). Wind data comes
+from Open-Meteo — free, no API key. The Strava login round-trip needs a dev build
+(`expo run:ios` / `run:android`) because the `windwin://` redirect scheme isn't
+available inside Expo Go.
 
-### Other setup steps
+### Strava setup
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+1. Create an API application at <https://www.strava.com/settings/api>
+   (set Authorization Callback Domain to `redirect`).
+2. `cp .env.example .env` and fill in `EXPO_PUBLIC_STRAVA_CLIENT_ID`.
+3. For personal development, also set `EXPO_PUBLIC_STRAVA_CLIENT_SECRET`.
+   Before shipping, deploy the ~40-line token proxy instead
+   (`npx wrangler deploy proxy/strava-token-proxy.js`) and set
+   `EXPO_PUBLIC_STRAVA_TOKEN_PROXY_URL` — a secret in the binary is extractable.
+4. Restart `expo start` after changing `.env`.
 
-## Learn more
+Before release: swap the connect button for Strava's official
+["Connect with Strava"](https://developers.strava.com/guidelines/) brand asset.
 
-To learn more about developing your project with Expo, look at the following resources:
+## Verification
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```bash
+npm run typecheck     # tsc --noEmit
+npm test              # unit tests for the wind/angle math (spec §8 fixtures)
+```
 
-## Join the community
+## Layout
 
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```
+src/
+  app/            expo-router screens: (tabs)/index (compass), (tabs)/segments,
+                  segment/[id] (detail sheet)
+  components/     CompassView, RelativeWindChip, SegmentRow, SegmentMap, ConnectStrava
+  hooks/          useHeading (smoothed, wrap-free), useLocation, useWind,
+                  useStravaAuth, useSegments (fetch + score + rank)
+  lib/            angles, windMath (scoring per spec §8.2), geometry, format, types
+  services/       weather (Open-Meteo + offline cache), strava (REST), stravaAuth (tokens)
+proxy/            Cloudflare Worker holding the Strava client secret
+```
