@@ -4,6 +4,22 @@ The path is: personal dev build → TestFlight → App Store review. Android/Pla
 same shape via EAS and can wait. Items marked ⚠️ are external accounts/approvals with lead
 time — start those first.
 
+## Lightweight alternative: personal use + a few friends (no App Store)
+
+Full review is only needed for public distribution. For a small circle:
+
+- **Yourself only, $0:** `npm run ios` with a free Apple ID — but free provisioning
+  expires every 7 days (rebuild weekly). A paid developer account makes dev builds last
+  a year.
+- **Friends, $99/yr, no review:** TestFlight *internal* testing — add friends (≤100) as
+  App Store Connect team users; no App Review, 90-day builds, JS fixes ship via
+  `eas update`. (Alternative: ad-hoc builds against registered device UDIDs — no ASC
+  setup but clunkier.) Android friends just get an APK.
+- **The real gate is Strava, not Apple:** single-player mode means only the app owner
+  can connect Strava until a capacity increase is granted (see step 0). Submit that
+  request as soon as sharing is on the table. Deploy the token proxy at this stage too —
+  every shared binary contains all `EXPO_PUBLIC_*` values.
+
 ## 0. Prerequisites (one-time)
 
 - ⚠️ **Apple Developer Program** ($99/yr) — needed for TestFlight and the App Store.
