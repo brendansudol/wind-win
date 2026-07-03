@@ -11,7 +11,8 @@
       "icon": "./assets/expo.icon",
       "bundleIdentifier": "com.brendansudol.windwin",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "Wind Win uses your location to look up local wind conditions and find Strava segments near you."
+        "NSLocationWhenInUseUsageDescription": "Wind Win uses your location to look up local wind conditions and find Strava segments near you.",
+        "LSApplicationQueriesSchemes": ["strava"]
       }
     },
     "android": {
